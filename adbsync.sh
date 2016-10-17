@@ -1,9 +1,28 @@
 #! /bin/bash
 
-# the source file, from which everything gets copied
-SOURCE="/home/rien/Music/"
-# the destination file on the device
-DEST="/storage/sdcard0/Music"
+SOURCE="$1"
+DEST="$2"
+
+if [[ `whoami` == "rein"  && $# -eq 0 ]]
+then
+	echo "Using settings for rien's machine"
+	SOURCE="/home/rien/Music/"
+	DEST="/storage/sdcard0/Music"
+elif [[ `whoami` == "pietervdvn"  && $# -eq 0 ]]
+then
+	echo "Using settings for pietervdvn's machine"
+	SOURCE="/home/pietervdvn/Music/"
+	DEST="/storage/sdcard1/Music/"
+elif [[ $# -lt 2 ]]
+then
+	echo "ADBSync: Usage"
+	echo "ADBSync <computer directory> <phone directory> [-r]"
+	exit
+fi
+
+
+echo "Copying from $SOURCE to $DEST"
+
 
 CUT=`echo $SOURCE | wc -c`
 FILES=`find -L "$SOURCE" -not -path "*./*" -not -name ".*" -type f | cut -b $CUT-`
@@ -87,6 +106,6 @@ DIFF=$(echo "$END - $START" | bc)
 echo "This took $DIFF sec"
 if [ -n "$LOG" ]
 then
-echo "Following files failed:"
-echo -e "$LOG"
+	echo "Following files failed:"
+	echo -e "$LOG"
 fi
